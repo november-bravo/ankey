@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "Request Config",
+  "description": "Schema for request.json",
+  "properties": {
+    "entities": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string"
+            },
+            "workflowKey": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "action",
+            "workflowKey"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "enableAssignRoleTaskAggregation": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "additionalProperties": false
+}

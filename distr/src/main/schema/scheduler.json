@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "title": "Scheduler",
+  "description": "Schema for scheduler configuration",
+  "properties": {
+    "threadPool": {
+      "type" : "object",
+      "properties" : {
+        "threadCount": {
+          "type" : "string"
+        }
+      }
+    },
+    "scheduler": {
+      "type" : "object",
+      "properties" : {
+        "executePersistentSchedules": {
+          "type" : ["boolean", "string"]
+        }
+      }
+    },
+    "advancedProperties": {
+      "type" : "object",
+      "additionalProperties" : {
+        "type" : "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

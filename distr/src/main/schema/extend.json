@@ -1,0 +1,1006 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Extend config schema",
+  "description": "Schema for create UDF fields",
+  "definitions": {
+    "encryption": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ]
+    },
+    "textFieldType": {
+      "type": "string",
+      "enum": [
+        "textField"
+      ]
+    },
+    "documentType": {
+      "type": "string",
+      "enum": [
+        "document"
+      ]
+    },
+    "textAreaType": {
+      "type": "string",
+      "enum": [
+        "textArea"
+      ]
+    },
+    "enumType": {
+      "type": "string",
+      "enum": [
+        "enum"
+      ]
+    },
+    "dateType": {
+      "type": "string",
+      "enum": [
+        "date",
+        "timestamp"
+      ]
+    },
+    "flagType": {
+      "type": "string",
+      "enum": [
+        "flag"
+      ]
+    },
+    "numberType": {
+      "type": "string",
+      "enum": [
+        "number"
+      ]
+    },
+    "treeType": {
+      "type": "string",
+      "enum": [
+        "tree"
+      ]
+    },
+    "lookupType": {
+      "type": "string",
+      "enum": [
+        "lookup", "multilookup"
+      ]
+    },
+    "multiGroupType": {
+      "type": "string",
+      "enum": [
+        "multiGroup"
+      ]
+    },
+    "objectType": {
+      "type": "string",
+      "enum": [
+        "object"
+      ]
+    },
+    "passwordType": {
+      "type": "string",
+      "enum": [
+        "passwordField"
+      ]
+    },
+    "searchableType": {
+      "type": "boolean",
+      "description": "Флаг, определяющий возможность искать по данному полю, используя механизм Open Search",
+      "example": true
+    },
+    "searchWeightType": {
+      "description": "Параметр веса для поля участвующего в полнотекстовом поиске Open Search ",
+      "type": "integer",
+      "format": "int32",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "lookupFieldType": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Lookup field schema",
+      "description": "Schema for create field with search type (realtime data search)",
+      "type": "object",
+      "properties": {
+        "fieldType": {
+          "$ref": "#/definitions/lookupType"
+        },
+        "object": {
+          "type": "string"
+        },
+        "displayField": {
+          "type": "string"
+        },
+        "searchStartLength": {
+          "type": "integer"
+        },
+        "resultsDisplayAmount": {
+          "type": "integer"
+        },
+        "lookupDisplayFields": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "lookupDisplayFields2": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "lookupField": {
+          "type": "string"
+        },
+        "queryId": {
+          "type": ["string", "null"]
+        },
+        "filter": {
+          "type": ["string", "null"]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "encryption": {
+          "$ref": "#/definitions/encryption"
+        },
+        "scope": {
+          "$ref": "#/definitions/scope"
+        },
+        "type": {
+          "$ref": "#/definitions/attrType"
+        },
+        "display": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "placeholder": {
+          "$ref": "#/definitions/placeholder"
+        },
+        "search": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "searchable": {
+          "$ref": "#/definitions/searchableType"
+        },
+        "searchWeight": {
+          "$ref": "#/definitions/searchWeightType"
+        },
+        "additionalRequestField": {
+          "$ref": "#/definitions/additionalRequestFieldType"
+        },
+        "title": {
+          "type": "string"
+        },
+        "infoFields":{
+          "$ref": "#/definitions/stringArray"
+        },
+        "dependsOn": {
+          "type": "string"
+        },
+        "valuesFields": {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "fieldType",
+        "object",
+        "displayField",
+        "lookupDisplayFields",
+        "lookupField"
+      ]
+    },
+    "multiGroupFieldsType": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Multi group fields schema",
+      "description": "Schema for creating multi group fields",
+      "type": "object",
+      "properties": {
+        "fieldType": {
+          "$ref": "#/definitions/multiGroupType"
+        },
+        "displayField": {
+          "type": "string"
+        },
+        "groupFields": {
+          "type": "object",
+          "minProperties": 2,
+          "additionalProperties": {
+              "type": "object",
+              "anyOf": [
+                  {"$ref": "#/definitions/lookupFieldType"},
+                  {"$ref": "#/definitions/numberFieldType"},
+                  {"$ref": "#/definitions/enumFieldType"}
+                  ]
+          }
+        },
+        "groupFieldsOrder": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "rootGroupField": {
+          "type": "string"
+        },
+        "encryption": {
+          "$ref": "#/definitions/encryption"
+        },
+        "scope": {
+          "$ref": "#/definitions/scope"
+        },
+        "type": {
+          "$ref": "#/definitions/attrType"
+        },
+        "display": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "fieldType",
+        "groupFields",
+        "displayField",
+        "groupFieldsOrder",
+        "rootGroupField"
+      ]
+    },
+    "textFieldFieldType": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Text field schema",
+      "description": "Schema for create textField field",
+      "type": "object",
+      "properties": {
+        "fieldType": {
+          "$ref": "#/definitions/textFieldType"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "encryption": {
+          "$ref": "#/definitions/encryption"
+        },
+        "scope": {
+          "$ref": "#/definitions/scope"
+        },
+        "type": {
+          "$ref": "#/definitions/attrType"
+        },
+        "display": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "search": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "searchable": {
+          "$ref": "#/definitions/searchableType"
+        },
+        "searchWeight": {
+          "$ref": "#/definitions/searchWeightType"
+        },
+        "additionalRequestField": {
+          "$ref": "#/definitions/additionalRequestFieldType"
+        },
+        "placeholder": {
+          "$ref": "#/definitions/placeholder"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "textAreaFieldType": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Text Area schema",
+      "description": "Schema for create textArea field",
+      "type": "object",
+      "properties": {
+        "fieldType": {
+          "$ref": "#/definitions/textAreaType"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "encryption": {
+          "$ref": "#/definitions/encryption"
+        },
+        "scope": {
+          "$ref": "#/definitions/scope"
+        },
+        "type": {
+          "$ref": "#/definitions/attrType"
+        },
+        "display": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "search": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "searchable": {
+          "$ref": "#/definitions/searchableType"
+        },
+        "searchWeight": {
+          "$ref": "#/definitions/searchWeightType"
+        },
+        "title": {
+          "type": "string"
+        },
+        "additionalRequestField": {
+          "$ref": "#/definitions/additionalRequestFieldType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "enumFieldType": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Enum field schema",
+      "description": "Schema for create enumeration field",
+      "type": "object",
+      "properties": {
+        "fieldType": {
+          "$ref": "#/definitions/enumType"
+        },
+        "values": {
+          "$ref": "#/definitions/stringArrayRequired"
+        },
+        "valuesFields": {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "encryption": {
+          "$ref": "#/definitions/encryption"
+        },
+        "scope": {
+          "$ref": "#/definitions/scope"
+        },
+        "type": {
+          "$ref": "#/definitions/attrType"
+        },
+        "display": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "search": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "searchable": {
+          "$ref": "#/definitions/searchableType"
+        },
+        "searchWeight": {
+          "$ref": "#/definitions/searchWeightType"
+        },
+        "placeholder": {
+          "$ref": "#/definitions/placeholder"
+        },
+        "title": {
+          "type": "string"
+        },
+        "additionalRequestField": {
+          "$ref": "#/definitions/additionalRequestFieldType"
+        },
+        "defaultValue": {
+          "type": "string"
+        },
+        "modelField": {
+          "type" : "string"
+        },
+        "primaryDisplayField": {
+          "type" : "string"
+        },
+        "secondaryDisplayField": {
+          "type" : "string"
+        },
+        "url": {
+          "type" : "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "dateFieldType": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Date field schema",
+      "description": "Schema for create date field (date or timestamp)",
+      "type": "object",
+      "properties": {
+        "fieldType": {
+          "$ref": "#/definitions/dateType"
+        },
+        "emptyValue": {
+          "type": "string",
+          "enum": [
+            "infinity",
+            "-infinity",
+            "now",
+            "today",
+            "tomorrow",
+            "yesterday",
+            "allballs",
+            "epoch",
+            null
+          ]
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "date", "full-date"
+          ]
+        },
+        "min": {
+          "type": "string",
+          "enum": [
+            "infinity",
+            "-infinity",
+            "now",
+            "today",
+            "tomorrow",
+            "yesterday",
+            "allballs",
+            "epoch",
+            null
+          ]
+        },
+        "minDependsOn": {
+          "type": "string"
+        },
+        "maxDependsOn": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "encryption": {
+          "$ref": "#/definitions/encryption"
+        },
+        "scope": {
+          "$ref": "#/definitions/scope"
+        },
+        "type": {
+          "$ref": "#/definitions/attrType"
+        },
+        "display": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "search": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "searchable": {
+          "$ref": "#/definitions/searchableType"
+        },
+        "searchWeight": {
+          "$ref": "#/definitions/searchWeightType"
+        },
+        "title": {
+          "type": "string"
+        },
+        "additionalRequestField": {
+          "$ref": "#/definitions/additionalRequestFieldType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "treeFieldType": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Tree field schema",
+      "description": "Schema for create tree field",
+      "type": "object",
+      "properties": {
+        "fieldType": {
+          "$ref": "#/definitions/treeType"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "encryption": {
+          "$ref": "#/definitions/encryption"
+        },
+        "scope": {
+          "$ref": "#/definitions/scope"
+        },
+        "type": {
+          "$ref": "#/definitions/attrType"
+        },
+        "display": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "search": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "searchable": {
+          "$ref": "#/definitions/searchableType"
+        },
+        "searchWeight": {
+          "$ref": "#/definitions/searchWeightType"
+        },
+        "title": {
+          "type": "string"
+        },
+        "additionalRequestField": {
+          "$ref": "#/definitions/additionalRequestFieldType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "flagFieldType": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Flag field schema",
+      "description": "Schema for create flag field (checkbox)",
+      "type": "object",
+      "properties": {
+        "fieldType": {
+          "$ref": "#/definitions/flagType"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "encryption": {
+          "$ref": "#/definitions/encryption"
+        },
+        "scope": {
+          "$ref": "#/definitions/scope"
+        },
+        "type": {
+          "$ref": "#/definitions/attrType"
+        },
+        "display": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "search": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "searchable": {
+          "$ref": "#/definitions/searchableType"
+        },
+        "searchWeight": {
+          "$ref": "#/definitions/searchWeightType"
+        },
+        "title": {
+          "type": "string"
+        },
+        "additionalRequestField": {
+          "$ref": "#/definitions/additionalRequestFieldType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "passwordFieldType": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Password field schema",
+      "description": "Schema for create password field (optional: with confirm)",
+      "type": "object",
+      "properties": {
+        "fieldType": {
+          "$ref": "#/definitions/passwordType"
+        },
+        "confirm": {
+          "type": "boolean"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "encryption": {
+          "$ref": "#/definitions/encryption"
+        },
+        "scope": {
+          "$ref": "#/definitions/scope"
+        },
+        "type": {
+          "$ref": "#/definitions/attrType"
+        },
+        "display": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "title": {
+          "type": "string"
+        },
+        "additionalRequestField": {
+          "$ref": "#/definitions/additionalRequestFieldType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "numberFieldType": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Number field schema",
+      "description": "Schema for create number field",
+      "type": "object",
+      "properties": {
+        "fieldType": {
+          "$ref": "#/definitions/numberType"
+        },
+        "format": {
+          "type" : "string",
+          "enum" : [
+            "int64", "int32"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "encryption": {
+          "$ref": "#/definitions/encryption"
+        },
+        "scope": {
+          "$ref": "#/definitions/scope"
+        },
+        "type": {
+          "$ref": "#/definitions/attrType"
+        },
+        "display": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "search": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "searchable": {
+          "$ref": "#/definitions/searchableType"
+        },
+        "searchWeight": {
+          "$ref": "#/definitions/searchWeightType"
+        },
+        "placeholder": {
+          "$ref": "#/definitions/placeholder"
+        },
+        "title": {
+          "type": "string"
+        },
+        "additionalRequestField": {
+          "$ref": "#/definitions/additionalRequestFieldType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "documentFieldType": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Document field schema",
+      "description": "Schema for create document field",
+      "type": "object",
+      "properties": {
+        "fieldType": {
+          "$ref": "#/definitions/documentType"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "encryption": {
+          "$ref": "#/definitions/encryption"
+        },
+        "scope": {
+          "$ref": "#/definitions/scope"
+        },
+        "type": {
+          "$ref": "#/definitions/attrType"
+        },
+        "display": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "displayField": {
+          "type": "string"
+        },
+        "search": {
+          "$ref": "#/definitions/stringArray"
+        },
+        "searchable": {
+          "$ref": "#/definitions/searchableType"
+        },
+        "searchWeight": {
+          "$ref": "#/definitions/searchWeightType"
+        },
+        "placeholder": {
+          "$ref": "#/definitions/placeholder"
+        },
+        "title": {
+          "type": "string"
+        },
+        "additionalRequestField": {
+          "$ref": "#/definitions/additionalRequestFieldType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "objectFieldType": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "Object field schema",
+      "description": "Schema for create jsonb field",
+      "type": "object",
+      "properties": {
+        "fieldType": {
+          "$ref": "#/definitions/objectType"
+        },
+        "required": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "private"
+      ]
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "ключ локализации для отображения подсказки о значении поля",
+      "example": "templates.informationsystem.customField.placeholder"
+    },
+    "attrType": {
+      "type": "string",
+      "enum": [
+        "internal"
+      ]
+    },
+    "positiveInteger": {
+      "type": "integer",
+      "format": "int64",
+      "minimum": 1
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "stringArrayRequired": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "additionalRequestFieldType": {
+      "type": "boolean",
+      "description": "Флаг, определяющий расширяет ли поле существующие списки полей запроса деталей сущности или списка сущностей",
+      "example": true
+    }
+  },
+  "type": "object",
+  "properties": {},
+  "patternProperties": {
+    "^(managed|workflow|repo)\/.*$": {
+      "type": "object",
+      "properties": {
+        "customDisplays": {
+          "type": "object",
+          "properties": {
+            "viewBeneficiaryFirstStepWizard": {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "wizardEmploymentExtended": {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "wizardEmploymentPopup": {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "viewBeneficiaryPickerTable": {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "viewModal": {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "properties": {
+            "managed": {
+              "type": "object",
+              "properties" : {
+                "required": {
+                  "type" : "boolean"
+                }
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/textFieldFieldType"
+                },
+                {
+                  "$ref": "#/definitions/textAreaFieldType"
+                },
+                {
+                  "$ref": "#/definitions/enumFieldType"
+                },
+                {
+                  "$ref": "#/definitions/dateFieldType"
+                },
+                {
+                  "$ref": "#/definitions/treeFieldType"
+                },
+                {
+                  "$ref": "#/definitions/flagFieldType"
+                },
+                {
+                  "$ref": "#/definitions/passwordFieldType"
+                },
+                {
+                  "$ref": "#/definitions/lookupFieldType"
+                },
+                {
+                  "$ref": "#/definitions/multiGroupFieldsType"
+                },
+                {
+                  "$ref": "#/definitions/objectFieldType"
+                },
+                {
+                  "$ref": "#/definitions/numberFieldType"
+                },
+                {
+                  "$ref": "#/definitions/documentFieldType"
+                },
+                {
+                  "$ref": "#/definitions/additionalRequestFieldType"
+                }
+              ]
+            },
+            "repo" : {
+              "type" : "object",
+              "properties" : {
+                "column" : {
+                  "type" : "string"
+                },
+                "type" : {
+                  "type" : "string",
+                  "enum" : ["STRING", "JSONB", "DATE", "DATETIME", "BIGINT", "INTEGER", "BOOLEAN"]
+                },
+                "init" : {
+                  "type" : "object",
+                  "properties" : {
+                    "file" : {
+                      "type" : "string"
+                    },
+                    "type" : {
+                      "type" : "string",
+                      "enum" : ["liquibase/xml","liquibase/json","liquibase/yaml"]
+                    }
+                  },
+                  "required" : ["file", "type"]
+                },
+                "virtual" : {
+                  "type" : "boolean"
+                }
+              },
+              "required" : ["column", "type"]
+            },
+            "policy" : {
+              "type" : "object",
+              "properties" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "type" : {
+                      "type" : "string",
+                      "enum" : ["string", "boolean", "object", "integer", "array"]
+                    },
+                    "example": {
+                      "oneOf": [
+                        {"type": "string"},
+                        {"type": "boolean"},
+                        {"type": "object"},
+                        {"type": "integer"},
+                        {"type": "array"}
+                      ]
+                    },
+                    "required" : {
+                      "type" : "boolean"
+                    },
+                    "enum" : {
+                      "type" : "array"
+                    },
+                    "format" : {
+                      "type" : "string"
+                    }
+                  },
+                  "required" : ["type"]
+                },
+                "policies" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "policyId" : {
+                        "type" :  "string"
+                      },
+                      "params" : {
+                        "type" : "object"
+                      }
+                    },
+                    "required" : ["policyId"],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            },
+            "autoComplete": {
+              "type" : "object",
+              "properties" : {
+                "defaultPattern": {
+                  "type" : "string"
+                },
+                "mappings": {
+                  "type" : "object",
+                  "patternProperties" : {
+                    "^.*$": {
+                      "type" : "object",
+                      "properties" : {
+                        "multiValue": {
+                          "type" : "string"
+                        },
+                        "emptyValue": {
+                          "type" : "string"
+                        }
+                      },
+                      "required" : ["multiValue", "emptyValue"],
+                      "additionalProperties" : false
+                    }
+                  }
+                },
+                "sourceFields": {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                },
+                "patterns": {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "pattern": {
+                        "type" : "string"
+                      },
+                      "resTypeName": {
+                        "type" : "string"
+                      }
+                    },
+                    "required" : ["pattern", "resTypeName"],
+                    "additionalProperties" : false
+                  }
+                }
+              },
+              "additionalProperties" : false,
+              "required" : ["defaultPattern", "mappings", "sourceFields"]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

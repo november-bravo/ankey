@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.gis.idm.integration</groupId>
+  <artifactId>croc-integration</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <properties>
+    <project.build.encoding>UTF-8</project.build.encoding>
+    <ankey.version>1.10</ankey.version>
+    <integration-common.version>1.10-SNAPSHOT</integration-common.version>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <!-- building Docker images and managing containers -->
+    <docker-maven-plugin.version>0.46.0</docker-maven-plugin.version>
+    <!-- create archives -->
+    <maven-assembly-plugin.version>3.7.0</maven-assembly-plugin.version>
+    <!-- compile the sources -->
+    <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+    <!-- removes files generated at build-time in a project's directory -->
+    <maven-clean-plugin.version>3.4.0</maven-clean-plugin.version>
+    <!-- copying dependencies, unpacking, analyzing, resolving and many more -->
+    <maven-dependency-plugin.version>3.7.0</maven-dependency-plugin.version>
+    <!-- uploads the project artifacts to the internal remote repository -->
+    <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
+    <!-- builds a Java Archive (JAR) -->
+    <maven-jar-plugin.version>3.4.1</maven-jar-plugin.version>
+    <!-- copying of project resources to the output directory -->
+    <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+    <!-- generating OSGi service descriptors based on annotations -->
+    <maven-scr-plugin.version>1.21.0</maven-scr-plugin.version>
+    <!-- supports creating an OSGi bundle from the contents of the compilation classpath along with its resources and dependencies -->
+    <maven-bundle-plugin.version>5.1.8</maven-bundle-plugin.version>
+    <!-- replace tokens in a given file with a value -->
+    <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
+    <!-- release a project with Maven -->
+    <maven-release-plugin.version>3.1.0</maven-release-plugin.version>
+    <!-- generating javadocs -->
+    <maven-javadoc-plugin.version>3.10.0</maven-javadoc-plugin.version>
+    <!-- run module tests -->
+    <maven-surefire-plugin.version>3.5.0</maven-surefire-plugin.version>
+    <!-- runs Ant scripts -->
+    <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
+    <osgi.version>7.0.0</osgi.version>
+    <!-- Testing -->
+    <testng.version>7.11.0</testng.version>
+    <mockito-core.version>5.14.2</mockito-core.version>
+    <sling.version>3.3.2</sling.version>
+  </properties>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>io.fabric8</groupId>
+          <artifactId>docker-maven-plugin</artifactId>
+          <version>${docker-maven-plugin.version}</version>
+          <extensions>true</extensions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <configuration>
+            <source>${maven.compiler.source}</source>
+            <target>${maven.compiler.target}</target>
+            <encoding>${project.build.encoding}</encoding>
+            <compilerArgument>-Xlint:all</compilerArgument>
+            <showWarnings>true</showWarnings>
+            <showDeprecation>true</showDeprecation>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>${maven-assembly-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>${maven-clean-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven-dependency-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>${maven-deploy-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${maven-jar-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${maven-resources-plugin.version}</version>
+          <configuration>
+            <encoding>${project.build.encoding}</encoding>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>${maven-bundle-plugin.version}</version>
+          <extensions>true</extensions>
+          <executions>
+            <execution>
+              <id>scr-metadata</id>
+              <goals>
+                <goal>manifest</goal>
+              </goals>
+              <configuration>
+                <supportIncrementalBuild>true</supportIncrementalBuild>
+              </configuration>
+            </execution>
+          </executions>
+          <configuration>
+            <exportScr>true</exportScr>
+            <instructions>
+              <Bundle-Copyright>Ankey IDM Integration Team</Bundle-Copyright>
+              <_dsannotations>*</_dsannotations>
+              <_metatypeannotations>*</_metatypeannotations>
+              <Import-Package>*</Import-Package>
+              <_nodefaultversion>false</_nodefaultversion>
+              <_metatype>**/*MetaType*</_metatype>
+              <_removeheaders>Bnd-LastModified,Built-By,Private-Package,Tool,Build-Jdk,Include-Resource,Ignore-Package,Private-Package,Bundle-DocURL</_removeheaders>
+              <Include-Resource>{maven-resources}</Include-Resource>
+            </instructions>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>com.google.code.maven-replacer-plugin</groupId>
+          <artifactId>replacer</artifactId>
+          <version>${maven-replacer-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>${maven-release-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven-javadoc-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>${maven-antrun-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  <dependencyManagement>
+    <dependencies>
+      <!-- Core OSGi -->
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>osgi.core</artifactId>
+        <version>${osgi.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>osgi.cmpn</artifactId>
+        <version>${osgi.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.osgi</groupId>
+        <artifactId>osgi.enterprise</artifactId>
+        <version>${osgi.version}</version>
+      </dependency>
+      <!-- Test Dependencies -->
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>${testng.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito-core.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.sling</groupId>
+        <artifactId>org.apache.sling.testing.osgi-mock.junit4</artifactId>
+        <version>${sling.version}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <repositories>
+    <repository>
+      <id>gis-repository</id>
+      <name>GiS repository</name>
+      <url>http://mvn.idm.stand.gis.lan/nexus/content/groups/public/</url>
+      <releases/>
+      <snapshots/>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>gis-repository</id>
+      <name>GiS repository</name>
+      <url>http://mvn.idm.stand.gis.lan/nexus/content/groups/public/</url>
+      <releases/>
+      <snapshots/>
+    </pluginRepository>
+  </pluginRepositories>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>gis-snapshots</id>
+      <name>GiS repository</name>
+      <url>http://mvn.idm.stand.gis.lan/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+    <repository>
+      <id>gis-releases</id>
+      <name>GiS repository</name>
+      <url>http://mvn.idm.stand.gis.lan/nexus/content/repositories/releases/</url>
+    </repository>
+  </distributionManagement>
+  <modules>
+    <module>croc-integration-bundle</module>
+    <module>distr</module>
+    <module>filemapper</module>
+  </modules>
+</project>

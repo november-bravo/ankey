@@ -231,6 +231,6 @@
   <modules>
     <module>croc-integration-bundle</module>
     <module>distr</module>
-    <module>filemapper</module>
+
   </modules>
 </project>

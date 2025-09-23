@@ -1,4 +1,4 @@
-package com.gis.idm.integration;
+package com.gis.idm.integration.croc;
 
 import com.gis.idm.api.scheduler.ExecutionException;
 import org.forgerock.json.JsonValue;

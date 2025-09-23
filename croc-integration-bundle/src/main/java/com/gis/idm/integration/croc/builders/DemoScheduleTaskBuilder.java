@@ -1,6 +1,6 @@
-package com.gis.idm.integration.builders;
+package com.gis.idm.integration.croc.builders;
 
-import com.gis.idm.integration.DemoScheduleTask;
+import com.gis.idm.integration.croc.DemoScheduleTask;
 import com.gis.idm.api.annotation.ScheduledTaskTemplate;
 import com.gis.idm.api.config.ConfigurationHelper;
 import com.gis.idm.api.scheduler.TaskBuilderService;
@@ -9,7 +9,6 @@ import org.forgerock.services.context.Context;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
-import org.osgi.service.component.annotations.Reference;
 
 import java.util.Map;
 

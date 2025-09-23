@@ -1,4 +1,4 @@
-package com.gis.idm.integration;
+package com.gis.idm.integration.croc;
 
 import com.gis.idm.api.managed.HandlerResult;
 import com.gis.idm.api.managed.ManagedObjectHandler;

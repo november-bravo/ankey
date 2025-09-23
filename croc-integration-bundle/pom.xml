@@ -86,43 +86,51 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.17</version>
-            <scope>compile</scope>
+            <version>1.7.36</version>
         </dependency>
+
+        <!-- newly added -->
         <dependency>
             <groupId>org.forgerock.commons</groupId>
             <artifactId>forgerock-util</artifactId>
             <version>3.0.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.gis.ankeyidm</groupId>
             <artifactId>ankeyidm-system</artifactId>
             <version>1.10</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.gis.ankeyidm</groupId>
             <artifactId>ankeyidm-core</artifactId>
             <version>1.10</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.forgerock.http</groupId>
             <artifactId>chf-http-core</artifactId>
             <version>3.0.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.forgerock.commons</groupId>
             <artifactId>json-resource</artifactId>
             <version>4.1.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.forgerock.commons</groupId>
             <artifactId>script-common</artifactId>
             <version>3.2.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.gis.ankeyidm</groupId>
             <artifactId>ankeyidm-util</artifactId>
             <version>1.10</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -135,9 +143,9 @@
                 <configuration>
                     <instructions>
                         <Import-Package>
-                            com.gis.idm.*;version="[0.0,2.0)",com.gis.idm.api.policy.exception;version="[0.0,2.0)",org.forgerock.openidm.*;version="[0.8,2.0)",*
+                            com.gis.idm.*;version="[0.0,2.0)",com.gis.idm.api.exception;version="[0.0,2.0)",org.forgerock.openidm.*;version="[0.8,2.0)",*
                         </Import-Package>
-                        <Export-Package>com.gis.idm.integration.*;version=1.0-SNAPSHOT</Export-Package>
+                        <Export-Package>com.gis.idm.integration.croc.*;version=1.0-SNAPSHOT</Export-Package>
                         <I18N>i18n.translation</I18N>
                     </instructions>
                 </configuration>

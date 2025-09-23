@@ -1,4 +1,4 @@
-package com.gis.idm.integration;
+package com.gis.idm.integration.croc;
 
 public interface DemoConfigurationService {
 

@@ -132,6 +132,11 @@
             <version>1.10</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.gis.ankeyidm</groupId>
+            <artifactId>ankeyidm-settings</artifactId>
+            <version>1.10</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -146,7 +151,7 @@
                             com.gis.idm.*;version="[0.0,2.0)",com.gis.idm.api.exception;version="[0.0,2.0)",org.forgerock.openidm.*;version="[0.8,2.0)",*
                         </Import-Package>
                         <Export-Package>com.gis.idm.integration.croc.*;version=1.0-SNAPSHOT</Export-Package>
-                        <I18N>i18n.translation</I18N>
+                        <I18N>i18n.udf_croc_translation</I18N>
                     </instructions>
                 </configuration>
             </plugin>

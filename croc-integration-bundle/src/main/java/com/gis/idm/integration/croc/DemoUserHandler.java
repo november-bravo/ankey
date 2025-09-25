@@ -24,14 +24,14 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 @Component(
-        immediate = true,
+        immediate = false,
         configurationPolicy = ConfigurationPolicy.IGNORE,
         property = {
                 Constants.SERVICE_PID + "=" + DemoUserHandler.PID,
                 Constants.SERVICE_DESCRIPTION + "=" + DemoUserHandler.DESCRIPTION,
                 Constants.SERVICE_VENDOR + "=" + ServerConstants.SERVER_VENDOR_NAME,
                 ManagedObjectHandler.PROPERTY_RESOURCE + "=" + User.MANAGED,
-                ManagedObjectHandler.PROPERTY_ORDER + "=" + ManagedObjectHandler.DEFAULT_USER_LEVEL
+                ManagedObjectHandler.PROPERTY_ORDER + "=" + ManagedObjectHandler.DEFAULT_USER_LEVEL + "1"
         },
         service = {ManagedObjectHandler.class}
 )

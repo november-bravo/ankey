@@ -10,13 +10,13 @@ import com.gis.idm.integration.common.services.HandlerStatusService;
 import com.gis.idm.integration.common.services.LoginGenerationService;
 import com.gis.idm.settings.SystemSetting;
 import org.forgerock.json.JsonValue;
-import org.forgerock.json.resource.Request;
 import org.forgerock.json.resource.ResourceException;
 import org.forgerock.openidm.core.ServerConstants;
 import org.forgerock.openidm.util.PromiseUtil;
 import org.forgerock.services.context.Context;
 import org.forgerock.util.promise.Promise;
 import org.osgi.framework.Constants;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.slf4j.Logger;
@@ -51,6 +51,12 @@ public class CrocUdfUserAdminHandler extends SwitchableHandler implements Handle
     static final String PID = "CrocUdfUserAdminHandler";
     static final String DESCRIPTION = "GiS.IDM :: Croc User/Admin Handler Service";
     static final String HANDLER_NAME = "CrocUdfUserAdminHandler";
+
+    @Activate
+    protected void activate() {
+        logger.info("Activating CrocUdfUserAdminHandler");
+    }
+
 
     @Override
     public String getHandlerId() {

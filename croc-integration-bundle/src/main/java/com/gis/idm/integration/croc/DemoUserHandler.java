@@ -35,41 +35,14 @@ import java.util.Map;
         },
         service = {ManagedObjectHandler.class}
 )
-public class DemoUserHandler implements ManagedObjectHandler, HandlerSetting {
+public class DemoUserHandler implements ManagedObjectHandler {
     private static final Logger logger = LoggerFactory.getLogger(DemoUserHandler.class);
     static final String PID = "DemoUserHandler";
     static final String DESCRIPTION = "GiS.IDM :: Demo User Handler Service";
 
-
-    @Reference
-    private UserService userService;
-
     @Override
     public Promise<HandlerResult, ResourceException> onCreate(Context context, Request request, JsonValue object, Map<String, Object> args) {
         logger.info("Hello from DemoUser Handler!");
-        User user = context.toJsonValue()
         return HandlerResult.ok().asPromise();
-    }
-
-    PromiseImpl<HandlerResult, ResourceException> pr = PromiseImpl.create();
-    @Override
-    public String getDescription() {
-        pr.handleResult();
-        return DemoUserHandler.DESCRIPTION;
-    }
-
-    @Override
-    public String getResource() {
-        return "";
-    }
-
-    @Override
-    public RequestService getRequestService() {
-        return null;
-    }
-
-    @Override
-    public String getConfigName() {
-        return "";
     }
 }

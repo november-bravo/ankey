@@ -137,6 +137,11 @@
             <artifactId>ankeyidm-settings</artifactId>
             <version>1.10</version>
         </dependency>
+        <dependency>
+            <groupId>com.gis.idm.integration.common</groupId>
+            <artifactId>ankey-integration-common-bundle</artifactId>
+            <version>1.10</version>
+        </dependency>
     </dependencies>
 
     <build>

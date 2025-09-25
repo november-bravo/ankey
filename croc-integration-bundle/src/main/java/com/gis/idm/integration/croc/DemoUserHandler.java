@@ -23,22 +23,23 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-@Component(
-        immediate = false,
+/*@Component(
+        immediate = true,
         configurationPolicy = ConfigurationPolicy.IGNORE,
         property = {
                 Constants.SERVICE_PID + "=" + DemoUserHandler.PID,
                 Constants.SERVICE_DESCRIPTION + "=" + DemoUserHandler.DESCRIPTION,
                 Constants.SERVICE_VENDOR + "=" + ServerConstants.SERVER_VENDOR_NAME,
                 ManagedObjectHandler.PROPERTY_RESOURCE + "=" + User.MANAGED,
-                ManagedObjectHandler.PROPERTY_ORDER + "=" + ManagedObjectHandler.DEFAULT_USER_LEVEL + "1"
+                ManagedObjectHandler.PROPERTY_ORDER + "=" + ManagedObjectHandler.DEFAULT_USER_LEVEL
         },
         service = {ManagedObjectHandler.class}
-)
+)*/
 public class DemoUserHandler implements ManagedObjectHandler {
     private static final Logger logger = LoggerFactory.getLogger(DemoUserHandler.class);
     static final String PID = "DemoUserHandler";
     static final String DESCRIPTION = "GiS.IDM :: Demo User Handler Service";
+
 
     @Override
     public Promise<HandlerResult, ResourceException> onCreate(Context context, Request request, JsonValue object, Map<String, Object> args) {

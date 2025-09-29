@@ -14,4 +14,9 @@
             <column name="udf_is_external_employee" type="boolean"/>
         </addColumn>
     </changeSet>
+    <changeSet id="102" author="gis">
+        <addColumn tableName="information_system" schemaName="ankey">
+            <column name="udf_is_admin" type="boolean"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -1,0 +1,66 @@
+package com.gis.idm.integration.croc.services.impl;
+
+import com.gis.idm.api.model.AppRole;
+import com.gis.idm.api.model.InformationSystem;
+import com.gis.idm.api.model.JsonModel;
+import com.gis.idm.integration.common.services.AppRoleServiceWrapper;
+import com.gis.idm.integration.common.services.InformationSystemServiceWrapper;
+import com.gis.idm.integration.croc.services.AdminIsAppRoleService;
+import org.forgerock.json.resource.ResourceException;
+import org.forgerock.services.context.Context;
+import org.forgerock.util.promise.Promise;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Reference;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import java.util.stream.Collectors;
+
+import static com.gis.idm.integration.common.services.Constants.VENDOR;
+import static org.osgi.framework.Constants.*;
+
+@Component(
+        immediate = true,
+        configurationPolicy = ConfigurationPolicy.IGNORE,
+        property = {
+                SERVICE_PID + "=" + AdminIsAppRoleServiceImpl.PID,
+                SERVICE_DESCRIPTION + "=" + AdminIsAppRoleServiceImpl.DESCRIPTION,
+                SERVICE_VENDOR + "=" + VENDOR
+        },
+        service = {AppRoleServiceWrapper.class}
+)
+public class AdminIsAppRoleServiceImpl implements AdminIsAppRoleService {
+    static final String PID = "com.gis.idm.integration.croc.services.AdminIsAppRoleService";
+    static final String DESCRIPTION = "Finds all roles for IS with isAdmin flag set";
+    static final String UDF_IS_ADMIN = "udf_is_admin";
+
+    private final static Logger logger = LoggerFactory.getLogger(AdminIsAppRoleServiceImpl.class);
+
+    @Reference
+    private InformationSystemServiceWrapper informationSystemServiceWrapper;
+    @Reference
+    private AppRoleServiceWrapper appRoleServiceWrapper;
+
+    @Override
+    public Promise<List<AppRole>, ResourceException> findAllIsAdminRoles(Context context) {
+        logger.info("findAllIsAdminRoles entered");
+        Set<String> values = new HashSet<>();
+        values.add("true");
+        Set<Long> result = null;
+        try {
+            result = informationSystemServiceWrapper.findByFieldValues(context, UDF_IS_ADMIN, values)
+                    .then(iss -> iss.stream().map(JsonModel::getOuid).collect(Collectors.toSet())).get();
+        } catch (Throwable e) {
+            logger.error("findAllIsAdminRoles", e);
+            throw new RuntimeException(e);
+        }
+        logger.info("ouids: {}", result.toString());
+        return appRoleServiceWrapper.findAppRolesByInformationSystemsOuids(context, result);
+    }
+}

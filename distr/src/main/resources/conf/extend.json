@@ -27,7 +27,6 @@
         ]
       }
     },
-
     "udfIsExternalEmployee": {
       "repo": {
         "column": "udf_is_external_employee",
@@ -48,6 +47,35 @@
         "required": false,
         "fieldType": "flag",
         "title": "templates.managed.form.user.udfIsExternalEmployee",
+        "display": [
+          "create",
+          "update",
+          "view"
+        ]
+      }
+    }
+  },
+  "managed/is": {
+    "udfIsAdmin": {
+      "repo": {
+        "column": "udf_is_admin",
+        "type": "BOOLEAN",
+        "init": {
+          "file": "liquibase/add_udf_is_admin.xml",
+          "type": "liquibase/xml"
+        }
+      },
+      "policy": {
+        "schema": {
+          "type": "boolean",
+          "example": true,
+          "required": false
+        }
+      },
+      "managed": {
+        "required": false,
+        "fieldType": "flag",
+        "title": "templates.managed.form.is.udfIsAdmin",
         "display": [
           "create",
           "update",

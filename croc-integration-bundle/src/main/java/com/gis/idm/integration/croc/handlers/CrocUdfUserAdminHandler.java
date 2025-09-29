@@ -3,13 +3,16 @@ package com.gis.idm.integration.croc.handlers;
 import com.gis.idm.api.config.ConfigurationHelper;
 import com.gis.idm.api.managed.HandlerResult;
 import com.gis.idm.api.managed.ManagedObjectHandler;
+import com.gis.idm.api.model.JsonModel;
 import com.gis.idm.api.model.User;
 import com.gis.idm.integration.common.entity.LoginGenerationConfig;
 import com.gis.idm.integration.common.handlers.LoginGenerationHandler;
 import com.gis.idm.integration.common.handlers.SwitchableHandler;
 import com.gis.idm.integration.common.parsers.LoginGenerationConfigParser;
+import com.gis.idm.integration.common.services.AppRoleServiceWrapper;
 import com.gis.idm.integration.common.services.HandlerStatusService;
 import com.gis.idm.integration.common.services.LoginGenerationService;
+import com.gis.idm.integration.croc.services.AdminIsAppRoleService;
 import com.gis.idm.settings.SystemSetting;
 import org.forgerock.json.JsonValue;
 import org.forgerock.json.resource.Request;
@@ -18,6 +21,7 @@ import org.forgerock.openidm.core.ServerConstants;
 import org.forgerock.openidm.managed.model.UserImpl;
 import org.forgerock.openidm.util.PromiseUtil;
 import org.forgerock.services.context.Context;
+import org.forgerock.util.Function;
 import org.forgerock.util.promise.Promise;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.ComponentContext;
@@ -28,6 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import com.gis.idm.api.request.RequestService;
 import com.gis.idm.api.service.data.UserService;
@@ -81,6 +88,11 @@ public class CrocUdfUserAdminHandler  extends SwitchableHandler implements Manag
     @Reference
     private HandlerStatusService handlerStatusService;
 
+    @Reference
+    private AdminIsAppRoleService adminIsAppRoleService;
+
+    @Reference
+    private AppRoleServiceWrapper appRoleServiceWrapper;
 
     @Override
     public String getHandlerId() {
@@ -100,10 +112,25 @@ public class CrocUdfUserAdminHandler  extends SwitchableHandler implements Manag
         User user = userService.build(object);
         LoginGenerationConfig config = getLoginGeneratorConfig(onCreate.name());
         return generateAndAlterLoginForAdmin(context, user, config)
+                .thenOnResult(ignore -> grantOrRevokeAdminIsRoles(context, user))
                 .then(ignore -> HandlerResult.ok());
     }
 
- //   @Override
+    private void grantOrRevokeAdminIsRoles(Context context, User user)  {
+        try {
+            Set<Long> groups = adminIsAppRoleService.findAllIsAdminRoles(context)
+                    .then(roles -> roles.stream().map(JsonModel::getOuid).collect(Collectors.toSet())).get();
+            if (user.toJsonValue().get("udfIsAdmin").asBoolean())
+                appRoleServiceWrapper.grantRoles(context, user.getOuid(), groups);
+            else
+                appRoleServiceWrapper.revokeRoles(context, user.getOuid(), groups);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    //   @Override
  //   public Promise<HandlerResult, ResourceException> onUpdate(Context context, Request request, JsonValue object, Map<String, Object> args, JsonValue oldObject, JsonValue newObject) {
     @Override
     public Promise<HandlerResult, ResourceException> onUpdate(Context context, JsonValue object, Map<String, Object> args, JsonValue oldObject, JsonValue newObject) {
@@ -113,8 +140,6 @@ public class CrocUdfUserAdminHandler  extends SwitchableHandler implements Manag
                         result -> {logger.error("ERROR: ", result);});
         User user = new UserImpl(newObject);
         user = updateUserName(user, user.getUserName(), getLoginGeneratorConfig(onUpdate.name()));
-
-        newObject.put(UserService.ATTR_USER_NAME, user.getUserName());
         logger.info("onUpdate exited");
         return HandlerResult.ok().asPromise(); //super.onUpdate(context, object, args, oldObject, newObject);
 
@@ -137,7 +162,7 @@ public class CrocUdfUserAdminHandler  extends SwitchableHandler implements Manag
         logger.info("updateUserName entered");
 
         if (login == null || login.isEmpty()) return user;
-        if (login.startsWith("admin_"))
+        if (login.toLowerCase().startsWith("admin_"))
             login = login.substring("admin_".length());
         user.toJsonValue().put(UserService.ATTR_USER_NAME,
                 user.toJsonValue().get("udfIsAdmin").asBoolean() ? "admin_" + login : login);
@@ -145,6 +170,7 @@ public class CrocUdfUserAdminHandler  extends SwitchableHandler implements Manag
         return user;
 
     }
+
 
     @Override
     public String getDescription() {

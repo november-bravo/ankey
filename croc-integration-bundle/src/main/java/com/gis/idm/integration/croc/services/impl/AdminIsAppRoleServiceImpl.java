@@ -4,6 +4,7 @@ import com.gis.idm.api.model.AppRole;
 import com.gis.idm.api.model.InformationSystem;
 import com.gis.idm.api.model.JsonModel;
 import com.gis.idm.api.request.RequestService;
+import com.gis.idm.api.service.data.InformationSystemService;
 import com.gis.idm.integration.common.services.AppRoleServiceWrapper;
 import com.gis.idm.integration.common.services.InformationSystemServiceWrapper;
 import com.gis.idm.integration.croc.services.AdminIsAppRoleService;
@@ -46,7 +47,7 @@ public class AdminIsAppRoleServiceImpl implements AdminIsAppRoleService {
     private final static Logger logger = LoggerFactory.getLogger(AdminIsAppRoleServiceImpl.class);
 
     @Reference
-    private InformationSystemServiceWrapper informationSystemServiceWrapper;
+    private InformationSystemService informationSystemService;
     @Reference
     private AppRoleServiceWrapper appRoleServiceWrapper;
     @Reference
@@ -63,11 +64,8 @@ public class AdminIsAppRoleServiceImpl implements AdminIsAppRoleService {
             var requestQuery = Requests.newQueryRequest(InformationSystem.getResourcePath()).setQueryExpression(query);
             logger.info("Query: {}", requestQuery.toString());
             result = requestService.query(context, requestQuery)
-                    .stream().map(resp -> {logger.info ("Resp: {}", resp.toString());
-                        return resp.getContent().get("_ouid").asLong();})
+                    .stream().map(resp -> informationSystemService.build(resp.getContent()).getOuid())
                     .collect(Collectors.toSet());
-           // result = informationSystemServiceWrapper.findByFieldValues(context, UDF_IS_ADMIN, values)
-           //         .then(iss -> iss.stream().map(JsonModel::getOuid).collect(Collectors.toSet())).get();
         } catch (Throwable e) {
             logger.error("findAllIsAdminRoles", e);
             throw new RuntimeException(e);

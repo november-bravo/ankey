@@ -140,7 +140,9 @@ public class CrocUdfUserAdminHandler  extends SwitchableHandler implements Manag
                         result -> {logger.error("ERROR: ", result);});
         User user = new UserImpl(newObject);
         user = updateUserName(user, user.getUserName(), getLoginGeneratorConfig(onUpdate.name()));
+        grantOrRevokeAdminIsRoles(context, user);
         logger.info("onUpdate exited");
+
         return HandlerResult.ok().asPromise(); //super.onUpdate(context, object, args, oldObject, newObject);
 
     }

@@ -3,9 +3,12 @@ package com.gis.idm.integration.croc.services.impl;
 import com.gis.idm.api.model.AppRole;
 import com.gis.idm.api.model.InformationSystem;
 import com.gis.idm.api.model.JsonModel;
+import com.gis.idm.api.request.RequestService;
 import com.gis.idm.integration.common.services.AppRoleServiceWrapper;
 import com.gis.idm.integration.common.services.InformationSystemServiceWrapper;
 import com.gis.idm.integration.croc.services.AdminIsAppRoleService;
+import org.forgerock.json.resource.QueryRequest;
+import org.forgerock.json.resource.Requests;
 import org.forgerock.json.resource.ResourceException;
 import org.forgerock.services.context.Context;
 import org.forgerock.util.promise.Promise;
@@ -33,7 +36,7 @@ import static org.osgi.framework.Constants.*;
                 SERVICE_DESCRIPTION + "=" + AdminIsAppRoleServiceImpl.DESCRIPTION,
                 SERVICE_VENDOR + "=" + VENDOR
         },
-        service = {AppRoleServiceWrapper.class}
+        service = {AdminIsAppRoleService.class}
 )
 public class AdminIsAppRoleServiceImpl implements AdminIsAppRoleService {
     static final String PID = "com.gis.idm.integration.croc.services.AdminIsAppRoleService";
@@ -46,6 +49,8 @@ public class AdminIsAppRoleServiceImpl implements AdminIsAppRoleService {
     private InformationSystemServiceWrapper informationSystemServiceWrapper;
     @Reference
     private AppRoleServiceWrapper appRoleServiceWrapper;
+    @Reference
+    private RequestService requestService;
 
     @Override
     public Promise<List<AppRole>, ResourceException> findAllIsAdminRoles(Context context) {
@@ -54,8 +59,15 @@ public class AdminIsAppRoleServiceImpl implements AdminIsAppRoleService {
         values.add("true");
         Set<Long> result = null;
         try {
-            result = informationSystemServiceWrapper.findByFieldValues(context, UDF_IS_ADMIN, values)
-                    .then(iss -> iss.stream().map(JsonModel::getOuid).collect(Collectors.toSet())).get();
+            String query = "select id from information_system where udf_is_admin = true";
+            var requestQuery = Requests.newQueryRequest(InformationSystem.getResourcePath()).setQueryExpression(query);
+            logger.info("Query: {}", requestQuery.toString());
+            result = requestService.query(context, requestQuery)
+                    .stream().map(resp -> {logger.info ("Resp: {}", resp.toString());
+                        return resp.getContent().get("_ouid").asLong();})
+                    .collect(Collectors.toSet());
+           // result = informationSystemServiceWrapper.findByFieldValues(context, UDF_IS_ADMIN, values)
+           //         .then(iss -> iss.stream().map(JsonModel::getOuid).collect(Collectors.toSet())).get();
         } catch (Throwable e) {
             logger.error("findAllIsAdminRoles", e);
             throw new RuntimeException(e);

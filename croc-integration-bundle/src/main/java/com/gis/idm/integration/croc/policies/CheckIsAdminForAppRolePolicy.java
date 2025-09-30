@@ -59,6 +59,21 @@ public class CheckIsAdminForAppRolePolicy implements OptionalPolicyFunction {
     @Reference
     private UsrAppRoleService usrAppRoleService;
 
+
+    /**
+     * Разрешаем применение, если
+     * 1. это новая заявка
+     * 2. заявка про UsrAppRoles
+     * 3. это заявка на выдачу прав
+     *
+     * @param context
+     * @param resourceName
+     * @param oldValue
+     * @param newValue
+     * @param property
+     * @param config
+     * @return
+     */
     @Override
     public boolean shouldApply(Context context, ResourcePath resourceName, JsonValue oldValue, JsonValue newValue, String property, JsonValue config) {
         logger.info("shouldApply entered");
@@ -70,6 +85,16 @@ public class CheckIsAdminForAppRolePolicy implements OptionalPolicyFunction {
                         || workflowRequest.getAction().equals(WorkflowRequestAction.batchCreate));
     }
 
+    /**
+     * Проверяем, что в каждой паре UsrAppRole если у IS, соответствующей AppRole, есть флаг isAdmin, то он должен быть и у User, иначе заявка отклоняется.
+     *
+     * @param context
+     * @param resourcePath
+     * @param jsonValue
+     * @param s
+     * @param jsonValue1
+     * @return
+     */
     @Override
     public PolicyResult apply(Context context, ResourcePath resourcePath, JsonValue jsonValue, String s, JsonValue jsonValue1) {
         logger.info("apply entered");

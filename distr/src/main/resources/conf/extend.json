@@ -83,5 +83,16 @@
         ]
       }
     }
+  },
+  "managed/request": {
+    "requestBody": {
+      "policy": {
+        "policies": [
+          {
+            "policyId": "CheckIsAdminForAppRolePolicy"
+          }
+        ]
+      }
+    }
   }
 }

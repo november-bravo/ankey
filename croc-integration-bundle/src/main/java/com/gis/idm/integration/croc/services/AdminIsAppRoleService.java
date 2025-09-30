@@ -8,5 +8,14 @@ import org.forgerock.services.context.Context;
 import java.util.List;
 
 public interface AdminIsAppRoleService {
+    /**
+     * Найти все роли, соответствующие админским ИС
+     *
+     * @param context
+     * @return
+     */
     Promise<List<AppRole>, ResourceException> findAllIsAdminRoles(Context context);
+
+    boolean isAppRoleFromAdminIs(Context context, Long appRoleId);
+
 }

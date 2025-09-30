@@ -74,4 +74,16 @@ public class AdminIsAppRoleServiceImpl implements AdminIsAppRoleService {
         logger.info("ouids: {}", result.toString());
         return appRoleServiceWrapper.findAppRolesByInformationSystemsOuids(context, result);
     }
+
+    @Override
+    public boolean isAppRoleFromAdminIs(Context context, Long appRoleId) {
+        logger.info("isAppRoleFromAdminIs entered");
+        String query = "select is2.id " +
+                "from information_system is2 join approle a " +
+                "on a.is_id = is2.id " +
+                "where a.id =  " + appRoleId.toString() + " " +
+                "and is2.udf_is_admin = true";
+        var requestQuery = Requests.newQueryRequest(InformationSystem.getResourcePath()).setQueryExpression(query);
+        return !requestService.query(context, requestQuery).isEmpty();
+    }
 }

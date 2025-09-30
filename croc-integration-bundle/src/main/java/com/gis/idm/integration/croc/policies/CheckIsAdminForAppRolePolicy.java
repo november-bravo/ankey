@@ -11,6 +11,7 @@ import com.gis.idm.api.service.data.AppRoleService;
 import com.gis.idm.api.service.data.UserService;
 import com.gis.idm.api.service.data.UsrAppRoleService;
 import com.gis.idm.api.service.data.WorkflowRequestService;
+import com.gis.idm.api.util.GroupRequestUtil;
 import com.gis.idm.integration.common.services.UserServiceWrapper;
 import com.gis.idm.integration.croc.services.AdminIsAppRoleService;
 import org.forgerock.json.JsonValue;
@@ -61,7 +62,7 @@ public class CheckIsAdminForAppRolePolicy implements OptionalPolicyFunction {
     @Override
     public boolean shouldApply(Context context, ResourcePath resourceName, JsonValue oldValue, JsonValue newValue, String property, JsonValue config) {
         logger.info("shouldApply entered");
-        logger.info("with parameters: \n{}\n{}\n{}\n{}\n{}", resourceName, oldValue, newValue, property, config);
+        logger.debug("with parameters: \n{}\n{}\n{}\n{}\n{}", resourceName, oldValue, newValue, property, config);
         WorkflowRequest workflowRequest =  workflowRequestService.build(newValue);
         return oldValue == null &&
                 workflowRequest.getEntity().equals(UsrAppRole.LINKED_OBJECT_PATH) &&
@@ -70,15 +71,12 @@ public class CheckIsAdminForAppRolePolicy implements OptionalPolicyFunction {
     }
 
     @Override
-    public PolicyResult apply(Context context, ResourcePath resourcePath, JsonValue jsonValue, String s, JsonValue jsonValue1) throws PolicyFunctionException {
+    public PolicyResult apply(Context context, ResourcePath resourcePath, JsonValue jsonValue, String s, JsonValue jsonValue1) {
         logger.info("apply entered");
-        logger.info("with parameters:\n{}\n{}\n{}\n{}", resourcePath, jsonValue, s, jsonValue1);
-
-        WorkflowRequest workflowRequest = workflowRequestService.build(jsonValue);
-
-            //по всем UsrAppRoles бежим и проверяем, если хотя бы в одном не совпадает isAdmin то отклоняем
-
-        if (workflowRequest.getBody().get("usrAppRoles")
+        logger.debug("with parameters:\n{}\n{}\n{}\n{}", resourcePath, jsonValue, s, jsonValue1);
+        if (workflowRequestService.build(jsonValue)
+                    .getBody()
+                    .get("usrAppRoles")
                     .asList(item -> usrAppRoleService.build(item))
                     .stream().noneMatch(res -> {
                         boolean isUserAdmin = false;
@@ -97,6 +95,6 @@ public class CheckIsAdminForAppRolePolicy implements OptionalPolicyFunction {
                         return isRoleAdmin && !isUserAdmin;
                     }))
                 return PolicyResult.ok();
-        return PolicyResult.failWithMessage("Check whether users in request has isAdmin attribute set");
+        return PolicyResult.failWithMessage("Административные роли не могут быт присвоены пользователю без включенного признака \"Администратор\"");
     }
 }

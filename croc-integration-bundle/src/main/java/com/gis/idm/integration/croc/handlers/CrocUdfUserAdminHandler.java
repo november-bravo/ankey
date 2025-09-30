@@ -6,7 +6,6 @@ import com.gis.idm.api.managed.ManagedObjectHandler;
 import com.gis.idm.api.model.JsonModel;
 import com.gis.idm.api.model.User;
 import com.gis.idm.integration.common.entity.LoginGenerationConfig;
-import com.gis.idm.integration.common.handlers.LoginGenerationHandler;
 import com.gis.idm.integration.common.handlers.SwitchableHandler;
 import com.gis.idm.integration.common.parsers.LoginGenerationConfigParser;
 import com.gis.idm.integration.common.services.AppRoleServiceWrapper;
@@ -15,13 +14,9 @@ import com.gis.idm.integration.common.services.LoginGenerationService;
 import com.gis.idm.integration.croc.services.AdminIsAppRoleService;
 import com.gis.idm.settings.SystemSetting;
 import org.forgerock.json.JsonValue;
-import org.forgerock.json.resource.Request;
 import org.forgerock.json.resource.ResourceException;
 import org.forgerock.openidm.core.ServerConstants;
-import org.forgerock.openidm.managed.model.UserImpl;
-import org.forgerock.openidm.util.PromiseUtil;
 import org.forgerock.services.context.Context;
-import org.forgerock.util.Function;
 import org.forgerock.util.promise.Promise;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.ComponentContext;
@@ -33,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
+
 import java.util.stream.Collectors;
 
 import com.gis.idm.api.request.RequestService;
@@ -65,13 +60,12 @@ public class CrocUdfUserAdminHandler  extends SwitchableHandler implements Manag
     static final String DESCRIPTION = "GiS.IDM :: Croc User/Admin Handler Service";
     static final String NAME =  "CrocUdfUserAdminHandler";
 
+    //просто убедиться что компонент стартует
     @Activate
     protected void activate(ComponentContext componentContext) {
 
         logger.info("Activating CrocUdfUserAdminHandler");
     }
-
-    //todo: разобраться с конфигурациями. сделать префикс и указатель на поле параметрами
 
     @Reference
     private UserService userService;
@@ -104,8 +98,6 @@ public class CrocUdfUserAdminHandler  extends SwitchableHandler implements Manag
         return handlerStatusService;
     }
 
-//    @Override
-//    public Promise<HandlerResult, ResourceException> onCreate(Context context, Request request, JsonValue object, Map<String, Object> args) {
     @Override
     public Promise<HandlerResult, ResourceException> onCreate(Context context, JsonValue object, Map<String, Object> args) {
         logger.info("onCreate entered");
@@ -130,15 +122,16 @@ public class CrocUdfUserAdminHandler  extends SwitchableHandler implements Manag
 
     }
 
-    //   @Override
- //   public Promise<HandlerResult, ResourceException> onUpdate(Context context, Request request, JsonValue object, Map<String, Object> args, JsonValue oldObject, JsonValue newObject) {
     @Override
     public Promise<HandlerResult, ResourceException> onUpdate(Context context, JsonValue object, Map<String, Object> args, JsonValue oldObject, JsonValue newObject) {
         logger.info("onUpdate entered");
+        /*
+        ** пример получения значения из конфигурации компонента. в коде упражнения не используется, просто посмотреть
         read(context)
                 .thenOnResultOrException(result -> {logger.info("Got config value: {}", result.get("config").get("justAnotherOne").asString());},
                         result -> {logger.error("ERROR: ", result);});
-        User user = new UserImpl(newObject);
+        */
+        User user = userService.build(newObject);
         user = updateUserName(user, user.getUserName(), getLoginGeneratorConfig(onUpdate.name()));
         grantOrRevokeAdminIsRoles(context, user);
         logger.info("onUpdate exited");

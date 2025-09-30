@@ -2,13 +2,10 @@ package com.gis.idm.integration.croc.services.impl;
 
 import com.gis.idm.api.model.AppRole;
 import com.gis.idm.api.model.InformationSystem;
-import com.gis.idm.api.model.JsonModel;
 import com.gis.idm.api.request.RequestService;
 import com.gis.idm.api.service.data.InformationSystemService;
 import com.gis.idm.integration.common.services.AppRoleServiceWrapper;
-import com.gis.idm.integration.common.services.InformationSystemServiceWrapper;
 import com.gis.idm.integration.croc.services.AdminIsAppRoleService;
-import org.forgerock.json.resource.QueryRequest;
 import org.forgerock.json.resource.Requests;
 import org.forgerock.json.resource.ResourceException;
 import org.forgerock.services.context.Context;
@@ -60,9 +57,13 @@ public class AdminIsAppRoleServiceImpl implements AdminIsAppRoleService {
         values.add("true");
         Set<Long> result = null;
         try {
+            // запрос через api не работает с кастомными полями, поэтому через query
             String query = "select id from information_system where udf_is_admin = true";
+            // query будет возвращать объекты типа InformationSystem
             var requestQuery = Requests.newQueryRequest(InformationSystem.getResourcePath()).setQueryExpression(query);
             logger.info("Query: {}", requestQuery.toString());
+            //извлекаем коллекцию идентификаторов. замороченно, но вот так.
+            //можно было прямо из JsonValue, но так нагляднее
             result = requestService.query(context, requestQuery)
                     .stream().map(resp -> informationSystemService.build(resp.getContent()).getOuid())
                     .collect(Collectors.toSet());

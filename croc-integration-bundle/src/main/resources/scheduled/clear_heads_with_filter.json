@@ -1,0 +1,15 @@
+{
+  "id": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Schema for demo scheduled task builder",
+  "type": "object",
+  "properties": {
+    "userFilter": {
+      "type": "string",
+      "default": "create",
+      "description": "Отбор пользователей",
+      "example": "firstName eq 'James'"
+    }
+  },
+  "additionalProperties": false
+}

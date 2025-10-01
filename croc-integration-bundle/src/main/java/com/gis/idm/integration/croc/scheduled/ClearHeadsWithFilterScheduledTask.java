@@ -59,6 +59,17 @@ public class ClearHeadsWithFilterScheduledTask extends InterruptableTaskExecutio
         } catch (java.util.concurrent.ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+        while (true){
+            if (isInterrupted()) {
+                logger.info("Clear heads task scheduled task stopped");
+                return;
+            }
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
 

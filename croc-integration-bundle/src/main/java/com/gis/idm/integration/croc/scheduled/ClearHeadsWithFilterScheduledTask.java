@@ -47,8 +47,6 @@ public class ClearHeadsWithFilterScheduledTask extends InterruptableTaskExecutio
         JsonValue params = json(scheduledContext).get(CONFIGURED_INVOKE_CONTEXT);
         logger.debug("Clear Heads task scheduled task started with context:\n{}", json(scheduledContext));
         QueryFilter<JsonPointer> paramFilter = QueryFilters.parse(params.get("userFilter").asString());
-        Map<String, Object> patchValues = new HashMap<>();
-        patchValues.put("managerId", null);
         String FILTER_HAS_HEAD = "managerId pr";
         QueryFilter<JsonPointer> hasHeadFilter = QueryFilters.parse(FILTER_HAS_HEAD);
         if (isInterrupted()) return;

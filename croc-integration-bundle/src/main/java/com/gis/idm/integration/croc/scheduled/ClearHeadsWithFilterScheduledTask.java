@@ -28,7 +28,6 @@ import static org.forgerock.json.JsonValue.json;
 public class ClearHeadsWithFilterScheduledTask extends InterruptableTaskExecution {
     private static final Logger logger = LoggerFactory.getLogger(ClearHeadsWithFilterScheduledTask.class);
     private final Map<String, Object> scheduledContext;
-    private final String FILTER_HAS_HEAD = "managerId pr";
 
     public ClearHeadsWithFilterScheduledTask(Context context, Map<String, Object> scheduledContext) {
         super(context);
@@ -50,6 +49,7 @@ public class ClearHeadsWithFilterScheduledTask extends InterruptableTaskExecutio
         QueryFilter<JsonPointer> paramFilter = QueryFilters.parse(params.get("userFilter").asString());
         Map<String, Object> patchValues = new HashMap<>();
         patchValues.put("managerId", null);
+        String FILTER_HAS_HEAD = "managerId pr";
         QueryFilter<JsonPointer> hasHeadFilter = QueryFilters.parse(FILTER_HAS_HEAD);
         if (isInterrupted()) return;
         try {
